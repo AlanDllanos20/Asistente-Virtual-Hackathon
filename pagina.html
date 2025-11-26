@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduBot - Asistente Educativo</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="logo-section">
+          <div class="logo-icon">🎓</div>
+          <h2 class="logo-title">EduBot</h2>
+          <p class="logo-sub">Asistente Educativo</p>
+        </div>
+
+        <nav class="menu">
+          <button class="menu-item active">💬 Chat Asistente</button>
+          <button class="menu-item">📄 Trámites</button>
+          <button class="menu-item">📊 Análisis</button>
+          <button class="menu-item">📚 Recursos</button>
+          <button class="menu-item">🛡️ Privacidad</button>
+        </nav>
+
+        <div class="footer-box">
+          <p class="region">Cundinamarca & Boyacá</p>
+          <p class="footer-title">Transformación Digital Educativa</p>
+        </div>
+      </aside>
+
+      <!-- Main Chat Area -->
+      <main class="chat-container">
+        <div class="chat-window">
+          <div class="message bot-message">
+            <div class="bot-avatar">🤖</div>
+            <div class="bubble">
+              ¡Bienvenido al Asistente Educativo! Estoy aquí para ayudarte con
+              información sobre horarios, matrículas, trámites y más.<br />
+              ¿En qué puedo asistirte?
+              <span class="timestamp">05:59 p. m.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Input bar -->
+        <div class="input-area">
+          <input
+            type="text"
+            placeholder="Escribe tu pregunta aquí..."
+            class="input-box"
+          />
+          <button class="send-btn">📨</button>
+        </div>
+
+        <p class="note">
+          Prototipo con respuestas simuladas - Prueba preguntando sobre:
+          horario, matrícula, constancia, calendario, ruta
+        </p>
+      </main>
+    </div>
+    <script src="App.js"></script>
+  </body>
+</html>
