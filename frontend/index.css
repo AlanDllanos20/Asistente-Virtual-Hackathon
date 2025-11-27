@@ -297,7 +297,6 @@ body {
 }
 
 .user-message .timestamp {
-  float: right;
   display: inline-block;
   margin-left: 8px;
   font-size: 11px !important;
