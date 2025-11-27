@@ -53,6 +53,31 @@ body {
   background: #1d4ed8;
   color: #ffffff;
 }
+
+/* Centrar los títulos */
+.sidebar-header {
+  text-align: center; /* Centra el texto */
+  width: 100%; /* Asegura que ocupe todo el ancho */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra todos los elementos dentro */
+  gap: 4px; /* Espacio entre título y subtítulo */
+}
+
+/* Ajustar título principal */
+.sidebar-header h1,
+.sidebar-header h2,
+.sidebar-header p {
+  margin-left: 0; /* Eliminar cualquier margen heredado */
+}
+
+/* Mover texto final hacia la derecha */
+.sidebar-footer {
+  padding-left: 20px; /* Ajusta la separación deseada */
+  padding-right: 10px;
+  text-align: left; /* Mantener alineación natural */
+}
+
 /* Footer */
 .sidebar-footer {
   padding: 20px;
@@ -111,15 +136,24 @@ body {
   font-size: 14px;
 }
 .send-btn {
-  background: #1d4ed8;
-  width: 42px;
-  height: 42px;
+  background: #44b3e6;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  color: #fff;
+  border: none;
+  padding: 0;
+  overflow: hidden; /* evita que cualquier cosa se salga */
+}
+
+.send-btn .send-icon {
+  width: 22px; /* tamaño ideal para íconos redondos */
+  height: 22px;
+  object-fit: contain; /* mantiene proporción */
+  display: block;
 }
 
 /* sección derecha */
