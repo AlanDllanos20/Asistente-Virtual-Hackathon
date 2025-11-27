@@ -1,12 +1,33 @@
 // -------------------------------
 // MENU ACTIVO
 // -------------------------------
+// --------- CONTROL DE MENÚ Y SECCIONES ---------
+
 const menuButtons = document.querySelectorAll(".menu-item");
+const sections = document.querySelectorAll(".content-section");
 
 menuButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
-    menuButtons.forEach((b) => b.classList.remove("active"));
+    // Quitar activo a todos
+    menuButtons.forEach((item) => item.classList.remove("active"));
+
+    // Activar botón seleccionado
     btn.classList.add("active");
+
+    // Mostrar sección correspondiente
+    sections.forEach((sec) => sec.classList.remove("active-section"));
+
+    const text = btn.textContent.trim();
+
+    if (text.includes("Chat Asistente")) {
+      document.getElementById("chat-section").classList.add("active-section");
+    }
+
+    if (text.includes("Trámites")) {
+      document
+        .getElementById("tramites-section")
+        .classList.add("active-section");
+    }
   });
 });
 

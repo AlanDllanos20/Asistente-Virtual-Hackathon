@@ -30,40 +30,181 @@
         </div>
       </aside>
 
-      <!-- Main Chat Area -->
-      <main class="chat-container">
-        <div class="chat-window">
-          <div class="message bot-message">
-            <div class="bot-avatar">🤖</div>
-            <div class="bubble">
-              ¡Bienvenido al Asistente Educativo! Estoy aquí para ayudarte con
-              información sobre horarios, matrículas, trámites y más.<br />
-              ¿En qué puedo asistirte?
-              <span class="timestamp"></span>
+      <!-- Main Content Area -->
+      <main class="content-area">
+        <!-- SECCIÓN: CHAT ASISTENTE -->
+        <section id="chat-section" class="content-section active-section">
+          <div class="chat-container">
+            <div class="chat-window">
+              <div class="message bot-message">
+                <div class="bot-avatar">🤖</div>
+                <div class="bubble">
+                  ¡Bienvenido al Asistente Educativo! Estoy aquí para ayudarte
+                  con información sobre horarios, matrículas, trámites y más.<br />
+                  ¿En qué puedo asistirte?
+                  <span class="timestamp"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="input-area">
+              <input
+                type="text"
+                class="input-box"
+                placeholder="Escribe tu pregunta aquí..."
+              />
+              <button class="send-btn">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/5423/5423972.png"
+                  class="send-icon"
+                  alt="Enviar"
+                />
+              </button>
+            </div>
+
+            <p class="note">
+              Prototipo con respuestas simuladas - Prueba preguntando sobre:
+              horario, matrícula, constancia, calendario, ruta
+            </p>
+          </div>
+        </section>
+
+        <!-- SECCIÓN: TRÁMITES -->
+        <section id="tramites-section" class="content-section">
+          <div class="tramites-container">
+            <h1 class="titulo">Gestor de Trámites</h1>
+            <p class="subtitulo">
+              Solicita certificados y constancias de forma rápida y segura
+            </p>
+
+            <div class="tramites-grid">
+              <!-- Tarjeta 1 -->
+              <div class="tramite-card">
+                <div class="icono">
+                  <img
+                    src="https://cdn-icons-png.freepik.com/512/9131/9131529.png"
+                    alt=""
+                  />
+                </div>
+                <h3>Constancia de Estudio</h3>
+                <p class="descripcion">
+                  Certificado que acredita la matrícula actual del estudiante
+                </p>
+
+                <div class="info">
+                  <span>⏳ 3 días hábiles</span>
+                  <span class="disponible">✔ Disponible</span>
+                </div>
+
+                <button class="btn-solicitar">
+                  <img
+                    src="https://cdn-icons-png.freepik.com/512/15785/15785149.png"
+                  />
+                  Solicitar
+                </button>
+              </div>
+
+              <!-- Tarjeta 2 -->
+              <div class="tramite-card">
+                <div class="icono">
+                  <img
+                    src="https://cdn-icons-png.freepik.com/512/9131/9131529.png"
+                    alt=""
+                  />
+                </div>
+                <h3>Certificado de Calificaciones</h3>
+                <p class="descripcion">
+                  Documento con el historial académico del estudiante
+                </p>
+
+                <div class="info">
+                  <span>⏳ 5 días hábiles</span>
+                  <span class="disponible">✔ Disponible</span>
+                </div>
+
+                <button class="btn-solicitar">
+                  <img
+                    src="https://cdn-icons-png.freepik.com/512/15785/15785149.png"
+                  />
+                  Solicitar
+                </button>
+              </div>
+
+              <!-- Tarjeta 3 -->
+              <div class="tramite-card">
+                <div class="icono">
+                  <img
+                    src="https://cdn-icons-png.freepik.com/512/9131/9131529.png"
+                    alt=""
+                  />
+                </div>
+                <h3>Reporte de Inasistencia</h3>
+                <p class="descripcion">
+                  Justificación de ausencias por motivos médicos o personales
+                </p>
+
+                <div class="info">
+                  <span>⏳ 1 día hábil</span>
+                  <span class="disponible">✔ Disponible</span>
+                </div>
+
+                <button class="btn-solicitar">
+                  <img
+                    src="https://cdn-icons-png.freepik.com/512/15785/15785149.png"
+                  />
+                  Solicitar
+                </button>
+              </div>
+
+              <!-- Tarjeta 4 -->
+              <div class="tramite-card">
+                <div class="icono">
+                  <img
+                    src="https://cdn-icons-png.freepik.com/512/9131/9131529.png"
+                    alt=""
+                  />
+                </div>
+                <h3>Paz y Salvo Académico</h3>
+                <p class="descripcion">
+                  Certificado de cumplimiento de obligaciones académicas
+                </p>
+
+                <div class="info">
+                  <span>⏳ 3 días hábiles</span>
+                  <span class="disponible">✔ Disponible</span>
+                </div>
+
+                <button class="btn-solicitar">
+                  <img
+                    src="https://cdn-icons-png.freepik.com/512/15785/15785149.png"
+                  />
+                  Solicitar
+                </button>
+              </div>
+            </div>
+
+            <!-- Información inferior -->
+            <div class="info-box">
+              <h3>Información Importante</h3>
+              <ul>
+                <li>
+                  Todos los trámites requieren autenticación del usuario
+                  (padre/estudiante)
+                </li>
+                <li>
+                  Los tiempos estimados son días hábiles desde la aprobación
+                </li>
+                <li>
+                  Recibirás notificación por correo cuando el documento esté
+                  listo
+                </li>
+                <li>
+                  En el sistema real, aquí se integrará con Dialogflow y SQLite
+                </li>
+              </ul>
             </div>
           </div>
-        </div>
-
-        <!-- Input bar -->
-        <div class="input-area">
-          <input
-            type="text"
-            placeholder="Escribe tu pregunta aquí..."
-            class="input-box"
-          />
-          <button class="send-btn">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/5423/5423972.png"
-              alt="Enviar"
-              class="send-icon"
-            />
-          </button>
-        </div>
-
-        <p class="note">
-          Prototipo con respuestas simuladas - Prueba preguntando sobre:
-          horario, matrícula, constancia, calendario, ruta
-        </p>
+        </section>
       </main>
     </div>
     <script src="App.js"></script>

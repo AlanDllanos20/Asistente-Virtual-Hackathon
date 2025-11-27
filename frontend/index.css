@@ -5,11 +5,14 @@ body {
   background: #f5f7fb;
   color: #333;
 }
+
 .layout {
   display: flex;
   height: 100vh;
-} /* Sidebar */
-/* Sidebar */
+}
+
+/* ---------------- SIDEBAR ---------------- */
+
 .sidebar {
   width: 260px;
   background: #ffffff;
@@ -20,11 +23,10 @@ body {
   padding: 20px 0;
 }
 
-/* Menu vertical */
 .menu {
   display: flex;
-  flex-direction: column; /* fuerza vertical */
-  gap: 8px; /* separación entre botones */
+  flex-direction: column;
+  gap: 8px;
   padding: 0 20px;
 }
 
@@ -43,42 +45,30 @@ body {
   color: #333;
 }
 
-/* Hover */
 .menu-item:hover {
   background: #e8edff;
 }
 
-/* Activo */
 .menu-item.active {
   background: #1d4ed8;
   color: #ffffff;
 }
 
-/* Centrar los títulos */
 .sidebar-header {
-  text-align: center; /* Centra el texto */
-  width: 100%; /* Asegura que ocupe todo el ancho */
+  text-align: center;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centra todos los elementos dentro */
-  gap: 4px; /* Espacio entre título y subtítulo */
+  align-items: center;
+  gap: 4px;
 }
 
-/* Ajustar título principal */
 .sidebar-header h1,
 .sidebar-header h2,
 .sidebar-header p {
-  margin-left: 0; /* Eliminar cualquier margen heredado */
+  margin: 0;
 }
 
-/* Mover texto final hacia la derecha */
-.sidebar-footer {
-  padding-left: 20px; /* Ajusta la separación deseada */
-  padding-right: 10px;
-  text-align: left; /* Mantener alineación natural */
-}
-
-/* Footer */
 .sidebar-footer {
   padding: 20px;
   background: #eef2ff;
@@ -86,13 +76,38 @@ body {
   margin: 0 20px;
   font-size: 14px;
   color: #1e40af;
-} /* Main Chat Area */
-.main-content {
+}
+
+/* ---------------- MAIN CONTENT AREA ---------------- */
+
+.content-area {
   flex: 1;
   display: flex;
   flex-direction: column;
   background: #f5f7fb;
+  height: 100%;
 }
+
+/* Secciones dinámicas */
+.content-section {
+  display: none;
+  height: 100%;
+}
+
+.active-section {
+  display: block;
+}
+
+/* ---------------- CHAT SECTION ---------------- */
+
+/* Contenedor general del chat */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 40px);
+}
+
+/* Área de mensajes */
 .chat-window {
   flex: 1;
   overflow-y: auto;
@@ -101,10 +116,9 @@ body {
   flex-direction: column;
 }
 
+/* Mensajes */
 .message {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
   gap: 12px;
   background: #ffffff;
   padding: 18px 24px;
@@ -114,76 +128,10 @@ body {
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.08);
 }
 
-.message-time {
-  font-size: 12px;
-  color: #777;
-  margin-top: 5px;
-} /* Input area */
-.input-area {
-  padding: 15px 30px;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-top: 1px solid #e5e7eb;
-}
-.input-area input {
-  flex: 1;
-  padding: 12px 16px;
-  border-radius: 30px;
-  border: 1px solid #d1d5db;
-  outline: none;
-  font-size: 14px;
-}
-.send-btn {
-  background: #44b3e6;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  border: none;
-  padding: 0;
-  overflow: hidden; /* evita que cualquier cosa se salga */
+.bot-message {
+  align-self: flex-start;
 }
 
-.send-btn .send-icon {
-  width: 22px; /* tamaño ideal para íconos redondos */
-  height: 22px;
-  object-fit: contain; /* mantiene proporción */
-  display: block;
-}
-
-/* sección derecha */
-
-/* Contenedor principal del chat */
-.chat-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 30px 60px; /* ⬅ más espacio a los lados */
-}
-
-/* Ventana donde aparecen los mensajes */
-.chat-window {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px 80px; /* ⬅ separa los mensajes del borde izquierdo */
-}
-
-/* Mensajes del bot y usuario */
-.message {
-  background: #ffffff;
-  padding: 18px 24px;
-  border-radius: 15px;
-  max-width: 70%; /* ⬅ mensajes más anchos como en la imagen 2 */
-  margin-bottom: 25px; /* ⬅ más espacio entre mensajes */
-  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.08);
-}
-
-/* Acomoda mensajes del usuario */
 .user-message {
   align-self: flex-end;
   background: #1d4ed8;
@@ -191,35 +139,150 @@ body {
   border-radius: 16px;
 }
 
-/* Input de escritura */
+/* ---------------- INPUT AREA (abajo siempre) ---------------- */
+
 .input-area {
-  padding: 20px 50px; /* ⬅ menos compactado */
+  padding: 12px 20px;
+  background: #ffffff;
   display: flex;
   align-items: center;
-  gap: 14px;
-  background: #ffffff;
+  gap: 10px;
   border-top: 1px solid #e5e7eb;
 }
 
 .input-box {
   flex: 1;
-  padding: 14px 18px;
+  padding: 12px 16px;
   border-radius: 30px;
   border: 1px solid #d1d5db;
-  font-size: 15px;
+  outline: none;
+  font-size: 14px;
 }
 
 .send-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
   width: 48px;
   height: 48px;
-  font-size: 18px;
-}
-
-.bot-message {
-  align-self: flex-start;
-}
-
-.bot-message .bubble {
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.send-icon {
+  width: 30px;
+  height: 30px;
+}
+
+/* Nota inferior */
+.note {
+  text-align: left;
+  padding: 10px 20px;
+  font-size: 13px;
+  color: #666;
+}
+
+/* ---------------- TRÁMITES ---------------- */
+
+.tramites-list {
+  margin-top: 15px;
+  padding-left: 15px;
+  font-size: 16px;
+  line-height: 1.9;
+}
+
+.tramites-container {
+  padding: 30px;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+.titulo {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.subtitulo {
+  color: #6c757d;
+  margin-bottom: 25px;
+}
+
+.tramites-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+}
+
+.tramite-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e7e7e7;
+}
+
+.tramite-card .icono img {
+  width: 38px;
+  height: 38px;
+}
+
+.tramite-card h3 {
+  margin: 10px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.descripcion {
+  color: #6c6c6c;
+  margin-bottom: 15px;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.disponible {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.btn-solicitar {
+  width: 120px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  background: #0d6efd;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-solicitar img {
+  width: 18px;
+}
+
+.btn-solicitar:hover {
+  background: #0b5ed7;
+}
+
+/* Información inferior */
+.info-box {
+  background: #eaf2ff;
+  border-radius: 12px;
+  padding: 25px;
+  margin-top: 40px;
+}
+
+.info-box h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
 }
