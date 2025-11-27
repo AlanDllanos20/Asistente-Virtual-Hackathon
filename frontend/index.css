@@ -286,3 +286,22 @@ body {
   font-size: 18px;
   margin-bottom: 10px;
 }
+
+
+.timestamp {
+  font-size: 11px; /* Más pequeño */
+  color: #636262; /* Color tenue */
+  display: block; /* Ocupa su propia línea */
+  margin-top: 6px; /* Separación del texto */
+  text-align: right; /
+}
+
+.user-message .timestamp {
+  float: right;
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 11px !important;
+  color: #ffffff !important;
+  opacity: 0.85;
+}
+
