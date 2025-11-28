@@ -100,7 +100,6 @@ body {
 
 /* ---------------- CHAT SECTION ---------------- */
 
-/* Contenedor general del chat */
 .chat-container {
   display: flex;
   flex-direction: column;
@@ -116,7 +115,6 @@ body {
   flex-direction: column;
 }
 
-/* Mensajes */
 .message {
   display: flex;
   gap: 12px;
@@ -139,7 +137,7 @@ body {
   border-radius: 16px;
 }
 
-/* ---------------- INPUT AREA (abajo siempre) ---------------- */
+/* ---------------- INPUT AREA ---------------- */
 
 .input-area {
   padding: 12px 20px;
@@ -287,13 +285,14 @@ body {
   margin-bottom: 10px;
 }
 
+/* ---------------- TIMESTAMPS ---------------- */
 
 .timestamp {
-  font-size: 11px; /* Más pequeño */
-  color: #636262; /* Color tenue */
-  display: block; /* Ocupa su propia línea */
-  margin-top: 6px; /* Separación del texto */
-  text-align: right; /
+  font-size: 11px;
+  color: #636262;
+  display: block;
+  margin-top: 6px;
+  text-align: right;
 }
 
 .user-message .timestamp {
@@ -304,3 +303,62 @@ body {
   opacity: 0.85;
 }
 
+/* ---------------- MODAL ---------------- */
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 25px;
+  width: 420px;
+  border-radius: 14px;
+}
+
+.form-group {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  padding: 10px 15px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+/* ---------------- SOLICITAR BUTTON (Pequeño) ---------------- */
+
+.solicitar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 0.8rem;
+  padding: 10px 14px;
+  border-radius: 9px;
+  background: #0057ff;
+  color: white;
+  border: none;
+  cursor: pointer;
+
+  height: 32px;
+}
+
+.solicitar-btn img {
+  width: 14px;
+  height: 14px;
+}

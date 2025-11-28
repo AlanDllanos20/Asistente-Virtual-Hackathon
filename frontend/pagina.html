@@ -96,7 +96,7 @@
                   <span class="disponible">✔ Disponible</span>
                 </div>
 
-                <button class="btn-solicitar">
+                <button class="solicitar-btn" data-tramite="constancia">
                   <img
                     src="https://cdn-icons-png.flaticon.com/512/8600/8600298.png"
                   />
@@ -122,7 +122,7 @@
                   <span class="disponible">✔ Disponible</span>
                 </div>
 
-                <button class="btn-solicitar">
+                <button class="solicitar-btn" data-tramite="calificaciones">
                   <img
                     src="https://cdn-icons-png.flaticon.com/512/8600/8600298.png"
                   />
@@ -148,7 +148,7 @@
                   <span class="disponible">✔ Disponible</span>
                 </div>
 
-                <button class="btn-solicitar">
+                <button class="solicitar-btn" data-tramite="inasistencia">
                   <img
                     src="   https://cdn-icons-png.flaticon.com/512/8600/8600298.png "
                   />
@@ -174,7 +174,7 @@
                   <span class="disponible">✔ Disponible</span>
                 </div>
 
-                <button class="btn-solicitar">
+                <button class="solicitar-btn" data-tramite="pazysalvo">
                   <img
                     src="   https://cdn-icons-png.flaticon.com/512/8600/8600298.png "
                   />
@@ -208,5 +208,33 @@
       </main>
     </div>
     <script src="App.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <div id="tramite-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2 id="modal-title"></h2>
+
+        <form id="tramite-form">
+          <div class="form-group">
+            <label>Nombre del estudiante</label>
+            <input type="text" name="nombre" required />
+          </div>
+
+          <div class="form-group">
+            <label>Documento</label>
+            <input type="text" name="documento" required />
+          </div>
+
+          <div class="form-group">
+            <label>Grado</label>
+            <input type="text" name="grado" required />
+          </div>
+
+          <div id="extra-fields"></div>
+
+          <button type="button" id="btn-descargar">Descargar PDF</button>
+          <button type="button" id="btn-cerrar">Cerrar</button>
+        </form>
+      </div>
+    </div>
   </body>
 </html>

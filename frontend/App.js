@@ -163,3 +163,114 @@ async function enviarMensaje(texto) {
   });
   return respuesta.json();
 }
+
+// -------------------------------
+//Modal de Trámites
+// -------------------------------
+const modal = document.getElementById("tramite-modal");
+const modalTitle = document.getElementById("modal-title");
+const extraFields = document.getElementById("extra-fields");
+let selectedTramite = null;
+
+document.querySelectorAll(".solicitar-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    selectedTramite = btn.dataset.tramite;
+    modal.classList.remove("hidden");
+
+    // Cambiar título
+    modalTitle.textContent = "Solicitud de " + formatTramite(selectedTramite);
+
+    // Campos extra según trámite
+    loadExtraFields(selectedTramite);
+  });
+});
+
+//Campos dinámicos segun tipo de trámite
+document.getElementById("btn-cerrar").addEventListener("click", () => {
+  modal.classList.add("hidden");
+});
+function loadExtraFields(type) {
+  extraFields.innerHTML = "";
+
+  if (type === "inasistencia") {
+    extraFields.innerHTML = `
+      <div class="form-group">
+        <label>Fecha de inasistencia</label>
+        <input type="date" name="fecha_inasistencia" required />
+      </div>
+
+      <div class="form-group">
+        <label>Motivo</label>
+        <textarea name="motivo" required></textarea>
+      </div>
+    `;
+  }
+
+  if (type === "calificaciones") {
+    extraFields.innerHTML = `
+      <div class="form-group">
+        <label>Año escolar</label>
+        <input type="number" name="anio" required />
+      </div>
+    `;
+  }
+}
+
+function formatTramite(t) {
+  switch (t) {
+    case "constancia":
+      return "Constancia de Estudio";
+    case "calificaciones":
+      return "Certificado de Calificaciones";
+    case "inasistencia":
+      return "Reporte de Inasistencia";
+    case "pazysalvo":
+      return "Paz y Salvo Académico";
+  }
+}
+//Generar PDF
+document.getElementById("btn-descargar").addEventListener("click", () => {
+  const formData = new FormData(document.getElementById("tramite-form"));
+  const data = Object.fromEntries(formData.entries());
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  generatePDF(selectedTramite, data, doc);
+
+  doc.save(`${selectedTramite}.pdf`);
+});
+
+//Plantilla de PDF
+
+function generatePDF(type, data, doc) {
+  doc.setFontSize(14);
+  doc.text("Departamento de Educación", 10, 10);
+  doc.text("-------------------------------------", 10, 16);
+
+  if (type === "constancia") {
+    doc.text("CONSTANCIA DE ESTUDIO", 10, 30);
+    doc.text(`Estudiante: ${data.nombre}`, 10, 45);
+    doc.text(`Documento: ${data.documento}`, 10, 52);
+    doc.text(`Grado: ${data.grado}`, 10, 59);
+  }
+
+  if (type === "calificaciones") {
+    doc.text("CERTIFICADO DE CALIFICACIONES", 10, 30);
+    doc.text(`Estudiante: ${data.nombre}`, 10, 45);
+    doc.text(`Año escolar: ${data.anio}`, 10, 52);
+  }
+
+  if (type === "inasistencia") {
+    doc.text("REPORTE DE INASISTENCIA", 10, 30);
+    doc.text(`Estudiante: ${data.nombre}`, 10, 45);
+    doc.text(`Fecha: ${data.fecha_inasistencia}`, 10, 52);
+    doc.text(`Motivo: ${data.motivo}`, 10, 59);
+  }
+
+  if (type === "pazysalvo") {
+    doc.text("PAZ Y SALVO ACADÉMICO", 10, 30);
+    doc.text(`Estudiante: ${data.nombre}`, 10, 45);
+    doc.text(`Documento: ${data.documento}`, 10, 52);
+  }
+}
