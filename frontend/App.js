@@ -229,7 +229,7 @@ function formatTramite(t) {
   }
 }
 //Generar PDF
-document.getElementById("btn-descargar").addEventListener("click", () => {
+document.getElementById("btn-descargar").addEventListener("click", async () => {
   const formData = new FormData(document.getElementById("tramite-form"));
   const data = Object.fromEntries(formData.entries());
 
@@ -237,8 +237,22 @@ document.getElementById("btn-descargar").addEventListener("click", () => {
   const doc = new jsPDF();
 
   generatePDF(selectedTramite, data, doc);
-
   doc.save(`${selectedTramite}.pdf`);
+
+  // 📌 GUARDAR EN SQLITE AL MISMO TIEMPO (formato correcto)
+  await fetch("http://localhost:3000/api/guardar-tramite", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      tipo: selectedTramite,
+      nombre: data.nombre || null,
+      documento: data.documento || null,
+      grado: data.grado || null,
+      extra: data,
+    }),
+  });
 });
 
 //Plantilla de PDF
