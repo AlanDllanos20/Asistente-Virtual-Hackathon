@@ -22,7 +22,6 @@ menuButtons.forEach((btn) => {
     }
   });
 });
-
 // ===============================
 // UTILIDADES
 // ===============================
@@ -197,3 +196,32 @@ document.getElementById("btn-descargar").addEventListener("click", async () => {
 
   modal.classList.add("hidden");
 });
+
+// ===============================
+// MODAL DE AVISO DE PRIVACIDAD
+// ===============================
+
+const avisoModal = document.getElementById("aviso-privacidad-modal");
+const checkboxAviso = document.getElementById("acepto-aviso");
+const btnCerrarAviso = document.getElementById("btn-cerrar-aviso");
+
+// Mostrar modal al cargar si no ha sido aceptado
+window.addEventListener("DOMContentLoaded", () => {
+  avisoModal.style.display = "flex";
+});
+
+// Habilitar botón solo si acepta
+checkboxAviso.addEventListener("change", () => {
+  btnCerrarAviso.disabled = !checkboxAviso.checked;
+});
+
+// Cerrar y guardar aceptación
+btnCerrarAviso.addEventListener("click", () => {
+  localStorage.setItem("aviso-privacidad-aceptado", "true");
+  avisoModal.style.display = "none";
+});
+
+// Función para abrir el modal desde el menú "Privacidad"
+function abrirAvisoPrivacidad() {
+  avisoModal.style.display = "flex";
+}

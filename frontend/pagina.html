@@ -7,6 +7,26 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
+    <!-- Modal Aviso de Privacidad -->
+    <div id="aviso-privacidad-modal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>Aviso de Privacidad y Protección de Datos Personales</h2>
+        <p>
+          En cumplimiento de la Ley de Protección de Datos Personales, te
+          informamos que los datos que nos proporciones serán utilizados
+          únicamente con fines académicos y administrativos. No serán
+          compartidos con terceros sin tu consentimiento explícito. Puedes
+          solicitar el acceso, rectificación o eliminación de tus datos en
+          cualquier momento.
+        </p>
+        <label>
+          <input type="checkbox" id="acepto-aviso" />
+          He leído y acepto el aviso de privacidad
+        </label>
+        <br /><br />
+        <button id="btn-cerrar-aviso" disabled>Continuar</button>
+      </div>
+    </div>
     <div class="layout">
       <!-- Sidebar -->
       <aside class="sidebar">
@@ -21,7 +41,6 @@
           <button class="menu-item">📄 Trámites</button>
           <button class="menu-item">📊 Análisis</button>
           <button class="menu-item">📚 Recursos</button>
-          <button class="menu-item">🛡️ Privacidad</button>
         </nav>
 
         <div class="sidebar-footer">

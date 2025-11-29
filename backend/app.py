@@ -12,6 +12,7 @@ import logging
 # Configuración básica
 logging.basicConfig(level=logging.INFO)
 DB_PATH = os.path.join(os.path.dirname(__file__), "edubot.db")
+TRAMITES_DB_PATH = os.path.join(os.path.dirname(__file__), "tramites.db")
 PDF_DIR = os.path.join(os.path.dirname(__file__), "pdfs")
 os.makedirs(PDF_DIR, exist_ok=True)
 
@@ -28,10 +29,14 @@ def get_db():
         db.row_factory = sqlite3.Row
     return db
 
+def get_tramites_db():
+    db = sqlite3.connect(TRAMITES_DB_PATH, detect_types=sqlite3.PARSE_DECLTYPES)
+    db.row_factory = sqlite3.Row
+    return db
+
 def init_db():
     db = sqlite3.connect(DB_PATH)
     cur = db.cursor()
-
     cur.execute("""
     CREATE TABLE IF NOT EXISTS events (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,7 +47,12 @@ def init_db():
         timestamp INTEGER
     )
     """)
+    db.commit()
+    db.close()
 
+def init_tramites_db():
+    db = sqlite3.connect(TRAMITES_DB_PATH)
+    cur = db.cursor()
     cur.execute("""
     CREATE TABLE IF NOT EXISTS tramites (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,7 +63,6 @@ def init_db():
         created_at INTEGER
     )
     """)
-
     db.commit()
     db.close()
 
@@ -98,83 +107,38 @@ def detect_intent(text):
 # Ollama helper (robusto)
 # -----------------------
 def ollama_intent(texto):
-    """
-    Llama a Ollama localmente y extrae JSON de la salida.
-    Devuelve (intent, reply).
-    """
     prompt = f"""
-Eres un asistente educativo del colegio.
-Responde SOLO en formato JSON válido.
-NO incluyas explicaciones, saludos ni texto adicional.
-
-Formato:
-{{
-  "intent": "...",
-  "reply": "..."
-}}
-
-Intenciones válidas:
-- horario
-- matricula
-- constancia
-- calificaciones_doc
-- inasistencia_doc
-- pazysalvo
-- tramites
-- calendario
-- ruta
-- conversacion
-- desconocido
-
-Pregunta del usuario:
-"{texto}"
-
-Responde SOLO el JSON.
+Eres un asistente educativo amable, claro y directo.
+Responde de forma breve y precisa a la siguiente pregunta sin hacer preguntas de vuelta.
+Pregunta: {texto}
+Respuesta:
 """
+
     try:
-        # Ejecuta ollama. --no-stream evita salidas en streaming
-        proc = subprocess.run(
-            ["ollama", "run", "llama3", "--no-stream", prompt],
+        result = subprocess.run(
+            ["ollama", "run", "llama3.2:1b", "--", prompt],
             capture_output=True,
             text=True,
-            timeout=30
+            encoding="utf-8",
+            errors="ignore",
+            timeout=45,
+            env={**os.environ, "OLLAMA_OPTIONS": "{\"num_predict\": 100}"}
         )
-        raw = (proc.stdout or "").strip()
-        if not raw and proc.stderr:
-            raw = proc.stderr.strip()
 
-        # Extraer primer bloque JSON { ... } si Ollama agrega texto extra
-        match = re.search(r"\{.*\}", raw, re.DOTALL)
-        if not match:
-            logging.warning("Ollama no devolvió JSON parseable. Raw output: %s", raw[:400])
-            return "desconocido", "No entendí, ¿puedes reformular la pregunta?"
+        raw = result.stdout.strip()
+        return "respuesta_directa", raw
 
-        try:
-            data = json.loads(match.group(0))
-            intent = data.get("intent", "desconocido")
-            reply = data.get("reply", "")
-            return intent, reply
-        except Exception as e_json:
-            logging.exception("Error parseando JSON de Ollama: %s", e_json)
-            return "desconocido", "No entendí, intenta preguntarlo de otra forma."
     except subprocess.TimeoutExpired:
-        logging.exception("Timeout al llamar a Ollama")
-        return "desconocido", "El servicio de IA tardó demasiado. Intenta de nuevo."
-    except FileNotFoundError:
-        logging.exception("Comando 'ollama' no encontrado")
-        return "desconocido", "Servicio de IA no disponible en el servidor."
+        return "error", "Lo siento, el modelo tardó demasiado en responder."
+
     except Exception as e:
-        logging.exception("Error al llamar a Ollama: %s", e)
-        return "desconocido", "Error interno al procesar la solicitud."
+        print("Error en Ollama:", e)
+        return "error", "Hubo un problema con el servicio de IA."
 
 # -----------------------
 # PDF generator (simple)
 # -----------------------
 def generate_tramite_pdf(tramite_id, tipo, data):
-    """
-    Genera un PDF simple en pdfs/tramite_<id>.pdf.
-    Intenta usar reportlab si está instalado; si no, genera un archivo .pdf con texto plano.
-    """
     pdf_path = os.path.join(PDF_DIR, f"tramite_{tramite_id}.pdf")
     try:
         from reportlab.lib.pagesizes import A4
@@ -182,7 +146,6 @@ def generate_tramite_pdf(tramite_id, tipo, data):
         c = canvas.Canvas(pdf_path, pagesize=A4)
         width, height = A4
 
-        # Encabezado
         c.setFont("Helvetica-Bold", 14)
         c.drawString(40, height - 60, "Gestor de Trámites - Institución Educativa")
         c.setFont("Helvetica", 10)
@@ -190,7 +153,6 @@ def generate_tramite_pdf(tramite_id, tipo, data):
         c.drawString(40, height - 95, f"Fecha: {time.strftime('%Y-%m-%d %H:%M:%S')}")
         c.line(40, height - 100, width - 40, height - 100)
 
-        # Contenido del trámite (campo por campo)
         y = height - 130
         c.setFont("Helvetica", 11)
         for k, v in (data or {}).items():
@@ -205,7 +167,6 @@ def generate_tramite_pdf(tramite_id, tipo, data):
         return pdf_path
     except Exception as e:
         logging.warning("No se pudo generar PDF con reportlab: %s. Guardando fallback.", e)
-        # Fallback: archivo de texto renombrado a .pdf (simple)
         with open(pdf_path, "w", encoding="utf-8") as f:
             f.write("Gestor de Trámites - Documento (fallback)\n\n")
             f.write(f"Trámite: {tipo}\n")
@@ -238,16 +199,15 @@ def api_message():
 
     save_event("message_sent", text=text, channel=channel)
 
-    # Intent detection usando Ollama (fallback al detector mock si Ollama falla)
     intent, reply = ollama_intent(text)
     if intent == "desconocido" and reply.strip() == "":
-        # Fallback local si Ollama no entiende
         intent, reply = detect_intent(text)
 
     save_event("message_received", intent=intent, text=reply, channel=channel)
 
     return jsonify({"reply": reply, "intent": intent})
 
+# ✅ NUEVO: Usa tramites.db en lugar de edubot.db
 @app.route("/api/tramite", methods=["POST"])
 def api_tramite():
     payload = request.get_json(force=True) or {}
@@ -262,7 +222,7 @@ def api_tramite():
         return jsonify({"ok": False, "error": "Faltan campos: tipo, nombre o grado"}), 400
 
     try:
-        db = get_db()
+        db = get_tramites_db()
         cur = db.cursor()
         cur.execute("""
             INSERT INTO tramites (tipo, nombre, grado, extra, created_at)
@@ -270,25 +230,27 @@ def api_tramite():
         """, (tipo, nombre, grado, json.dumps(extra), int(time.time())))
         tramite_id = cur.lastrowid
         db.commit()
+        db.close()
 
         save_event("tramite_submitted", intent=tipo, text=f"{tipo}-{nombre}-{grado}")
 
-        # Generar PDF asociado
         pdf_path = generate_tramite_pdf(tramite_id, tipo, {"nombre": nombre, "grado": grado, **extra})
 
-        logging.info("Trámite %s guardado. PDF: %s", tramite_id, pdf_path)
+        logging.info("Trámite %s guardado en tramites.db. PDF: %s", tramite_id, pdf_path)
         return jsonify({"ok": True, "id": tramite_id, "pdf": os.path.basename(pdf_path)})
     except Exception as e:
         logging.exception("Error registrando trámite: %s", e)
         return jsonify({"ok": False, "error": "Error interno al registrar trámite"}), 500
 
+# ✅ NUEVO: Usa tramites.db
 @app.route("/api/tramites", methods=["GET"])
 def api_list_tramites():
     try:
-        db = get_db()
+        db = get_tramites_db()
         cur = db.cursor()
         cur.execute("SELECT id, tipo, nombre, grado, extra, created_at FROM tramites ORDER BY created_at DESC")
         rows = [dict(r) for r in cur.fetchall()]
+        db.close()
         return jsonify(rows)
     except Exception as e:
         logging.exception("Error listando trámites: %s", e)
@@ -353,5 +315,6 @@ def serve_frontend_file(filename):
 # -----------------------
 if __name__ == "__main__":
     init_db()
-    logging.info("Iniciando EduBot backend en http://127.0.0.1:5000")
+    init_tramites_db()
+    logging.info("Iniciando EduBot backend en http://127.0.0.1:5000 ")
     app.run(debug=True, host="0.0.0.0", port=5000)
