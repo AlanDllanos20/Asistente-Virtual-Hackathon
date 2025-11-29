@@ -1,29 +1,21 @@
-// -------------------------------
+// ===============================
 // MENU ACTIVO
-// -------------------------------
-// --------- CONTROL DE MENÚ Y SECCIONES ---------
-
+// ===============================
 const menuButtons = document.querySelectorAll(".menu-item");
 const sections = document.querySelectorAll(".content-section");
 
 menuButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
-    // Quitar activo a todos
     menuButtons.forEach((item) => item.classList.remove("active"));
-
-    // Activar botón seleccionado
     btn.classList.add("active");
 
-    // Mostrar sección correspondiente
     sections.forEach((sec) => sec.classList.remove("active-section"));
 
-    const text = btn.textContent.trim();
-
-    if (text.includes("Chat Asistente")) {
+    if (btn.textContent.includes("Chat Asistente")) {
       document.getElementById("chat-section").classList.add("active-section");
     }
 
-    if (text.includes("Trámites")) {
+    if (btn.textContent.includes("Trámites")) {
       document
         .getElementById("tramites-section")
         .classList.add("active-section");
@@ -31,142 +23,97 @@ menuButtons.forEach((btn) => {
   });
 });
 
-// -------------------------------
+// ===============================
 // UTILIDADES
-// -------------------------------
-
-// Función que devuelve la hora actual en formato "hh:mm a. m."
+// ===============================
 function getCurrentTime() {
   const now = new Date();
   let hours = now.getHours();
   const minutes = now.getMinutes().toString().padStart(2, "0");
-
   const ampm = hours >= 12 ? "p. m." : "a. m.";
   hours = hours % 12 || 12;
-
   return `${hours}:${minutes} ${ampm}`;
 }
 
-// Obtiene el contenedor del chat
 const chatWindow = document.querySelector(".chat-window");
-
-// Input y botón
 const input = document.querySelector(".input-box");
 const sendBtn = document.querySelector(".send-btn");
 
-// -------------------------------
-// FUNCIÓN PARA AGREGAR MENSAJE DEL USUARIO
-// -------------------------------
+function scrollToBottom() {
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+// ===============================
+// MENSAJES
+// ===============================
 function addUserMessage(text) {
   const message = document.createElement("div");
   message.classList.add("message", "user-message");
-
-  message.innerHTML = `
-    ${text}
-    <span class="timestamp">${getCurrentTime()}</span>
-  `;
-
+  message.innerHTML = `${text}<span class="timestamp">${getCurrentTime()}</span>`;
   chatWindow.appendChild(message);
   scrollToBottom();
 }
 
-// -------------------------------
-// FUNCIÓN PARA AGREGAR MENSAJE DEL BOT
-// -------------------------------
 function addBotMessage(text) {
-  const message = document.createElement("div");
-  message.classList.add("message", "bot-message");
-
-  message.innerHTML = `
+  const msg = document.createElement("div");
+  msg.classList.add("message", "bot-message");
+  msg.innerHTML = `
     <div class="bot-avatar">🤖</div>
     <div class="bubble">
       ${text}
       <span class="timestamp">${getCurrentTime()}</span>
     </div>
   `;
-
-  chatWindow.appendChild(message);
+  chatWindow.appendChild(msg);
   scrollToBottom();
 }
 
-// -------------------------------
-// BOT RESPUESTAS SIMULADAS
-// -------------------------------
-function botReply(userText) {
-  userText = userText.toLowerCase();
-
-  if (userText.includes("horario")) {
-    return "El horario escolar es de lunes a viernes de 7:00 a.m. a 2:00 p.m.";
-  }
-  if (userText.includes("matrícula")) {
-    return "La matrícula se realiza en línea a través del portal educativo oficial.";
-  }
-  if (userText.includes("constancia")) {
-    return "Puedes solicitar constancias en la oficina administrativa o en línea.";
-  }
-  if (userText.includes("calendario")) {
-    return "El calendario escolar está disponible en el sitio web oficial.";
-  }
-
-  return "Puedo ayudarte con información sobre matrículas, horarios, constancias, rutas y más.";
-}
-
-// -------------------------------
-// ENVIAR MENSAJE
-// -------------------------------
-function sendMessage() {
+// ===============================
+// CHAT CONECTADO A BACKEND FLASK
+// ===============================
+async function sendMessage() {
   const text = input.value.trim();
-  if (text === "") return;
+  if (!text) return;
 
   addUserMessage(text);
-
-  // Respuesta del bot luego de una breve espera
-  setTimeout(() => {
-    const reply = botReply(text);
-    addBotMessage(reply);
-  }, 600);
-
   input.value = "";
+
+  try {
+    const r = await fetch("http://127.0.0.1:5000/api/message", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+
+    const data = await r.json();
+    addBotMessage(data.reply);
+  } catch (error) {
+    addBotMessage("⚠ Error de conexión con el servidor.");
+  }
 }
 
-// -------------------------------
-// EVENTOS
-// -------------------------------
 sendBtn.addEventListener("click", sendMessage);
-
-input.addEventListener("keypress", function (e) {
+input.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-// Mantener el scroll abajo siempre
-function scrollToBottom() {
-  chatWindow.scrollTop = chatWindow.scrollHeight;
-}
-
-// -------------------------------
-// PONER HORA AL MENSAJE INICIAL
-// -------------------------------
-document.querySelectorAll(".timestamp").forEach((ts) => {
-  ts.textContent = getCurrentTime();
-});
-
-// -------------------------------
-// Conectar Frontend con Backend
-// -------------------------------
-async function enviarMensaje(texto) {
-  const respuesta = await fetch("/api/chat", {
+// ===============================
+// OLLAMA CHAT
+// ===============================
+async function preguntarOllama(texto) {
+  const r = await fetch("http://127.0.0.1:5000/api/ollama-chat", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ pregunta: texto }),
   });
-  return respuesta.json();
+
+  const data = await r.json();
+  addBotMessage(data.respuesta);
 }
 
-// -------------------------------
-//Modal de Trámites
-// -------------------------------
+// ===============================
+// TRÁMITES (MODAL)
+// ===============================
 const modal = document.getElementById("tramite-modal");
 const modalTitle = document.getElementById("modal-title");
 const extraFields = document.getElementById("extra-fields");
@@ -176,19 +123,19 @@ document.querySelectorAll(".solicitar-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     selectedTramite = btn.dataset.tramite;
     modal.classList.remove("hidden");
-
-    // Cambiar título
     modalTitle.textContent = "Solicitud de " + formatTramite(selectedTramite);
-
-    // Campos extra según trámite
     loadExtraFields(selectedTramite);
+    document.getElementById("tramite-form").reset();
   });
 });
 
-//Campos dinámicos segun tipo de trámite
 document.getElementById("btn-cerrar").addEventListener("click", () => {
   modal.classList.add("hidden");
 });
+
+// ===============================
+// CAMPOS EXTRAS
+// ===============================
 function loadExtraFields(type) {
   extraFields.innerHTML = "";
 
@@ -198,7 +145,6 @@ function loadExtraFields(type) {
         <label>Fecha de inasistencia</label>
         <input type="date" name="fecha_inasistencia" required />
       </div>
-
       <div class="form-group">
         <label>Motivo</label>
         <textarea name="motivo" required></textarea>
@@ -217,74 +163,37 @@ function loadExtraFields(type) {
 }
 
 function formatTramite(t) {
-  switch (t) {
-    case "constancia":
-      return "Constancia de Estudio";
-    case "calificaciones":
-      return "Certificado de Calificaciones";
-    case "inasistencia":
-      return "Reporte de Inasistencia";
-    case "pazysalvo":
-      return "Paz y Salvo Académico";
-  }
+  return {
+    constancia: "Constancia de Estudio",
+    calificaciones: "Certificado de Calificaciones",
+    inasistencia: "Reporte de Inasistencia",
+    pazysalvo: "Paz y Salvo Académico",
+  }[t];
 }
-//Generar PDF
+
+// ===============================
+// ENVIAR TRÁMITE Y DESCARGAR PDF
+// ===============================
 document.getElementById("btn-descargar").addEventListener("click", async () => {
-  const formData = new FormData(document.getElementById("tramite-form"));
-  const data = Object.fromEntries(formData.entries());
+  const data = Object.fromEntries(
+    new FormData(document.getElementById("tramite-form")).entries()
+  );
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  generatePDF(selectedTramite, data, doc);
-  doc.save(`${selectedTramite}.pdf`);
-
-  // 📌 GUARDAR EN SQLITE AL MISMO TIEMPO (formato correcto)
-  await fetch("http://localhost:3000/api/guardar-tramite", {
+  const r = await fetch("http://127.0.0.1:5000/api/tramite", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      tipo: selectedTramite,
-      nombre: data.nombre || null,
-      documento: data.documento || null,
-      grado: data.grado || null,
-      extra: data,
-    }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tipo: selectedTramite, ...data }),
   });
+
+  const result = await r.json();
+
+  if (!result.ok) {
+    alert("Error al registrar el trámite");
+    return;
+  }
+
+  // Descargar PDF desde Flask
+  window.open(`http://127.0.0.1:5000/api/descargar-pdf/${result.id}`, "_blank");
+
+  modal.classList.add("hidden");
 });
-
-//Plantilla de PDF
-
-function generatePDF(type, data, doc) {
-  doc.setFontSize(14);
-  doc.text("Departamento de Educación", 10, 10);
-  doc.text("-------------------------------------", 10, 16);
-
-  if (type === "constancia") {
-    doc.text("CONSTANCIA DE ESTUDIO", 10, 30);
-    doc.text(`Estudiante: ${data.nombre}`, 10, 45);
-    doc.text(`Documento: ${data.documento}`, 10, 52);
-    doc.text(`Grado: ${data.grado}`, 10, 59);
-  }
-
-  if (type === "calificaciones") {
-    doc.text("CERTIFICADO DE CALIFICACIONES", 10, 30);
-    doc.text(`Estudiante: ${data.nombre}`, 10, 45);
-    doc.text(`Año escolar: ${data.anio}`, 10, 52);
-  }
-
-  if (type === "inasistencia") {
-    doc.text("REPORTE DE INASISTENCIA", 10, 30);
-    doc.text(`Estudiante: ${data.nombre}`, 10, 45);
-    doc.text(`Fecha: ${data.fecha_inasistencia}`, 10, 52);
-    doc.text(`Motivo: ${data.motivo}`, 10, 59);
-  }
-
-  if (type === "pazysalvo") {
-    doc.text("PAZ Y SALVO ACADÉMICO", 10, 30);
-    doc.text(`Estudiante: ${data.nombre}`, 10, 45);
-    doc.text(`Documento: ${data.documento}`, 10, 52);
-  }
-}
